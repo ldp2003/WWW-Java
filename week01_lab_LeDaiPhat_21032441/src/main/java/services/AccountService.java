@@ -1,6 +1,7 @@
 package services;
 
 import entities.Account;
+import org.checkerframework.checker.units.qual.A;
 import repositories.AccountRepository;
 
 import java.lang.reflect.Array;
@@ -25,5 +26,10 @@ public class AccountService {
 
     public ArrayList<Account> getAccountByRole(String role){
         return accountRepository.findByRole(role);
+    }
+
+    public boolean editAccountById(String accountId, String fullName, String password, String email, String phone, Byte status){
+        Account account = new Account(accountId, fullName, password, email, phone, status);
+        return accountRepository.update(account);
     }
 }

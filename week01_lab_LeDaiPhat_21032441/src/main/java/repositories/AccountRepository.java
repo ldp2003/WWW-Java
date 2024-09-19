@@ -23,6 +23,7 @@ public class AccountRepository implements IRepository<Account>{
             transaction.begin();
             em.persist(account);
             transaction.commit();
+
             return true;
         } catch (Exception e){
             e.printStackTrace();
@@ -34,10 +35,21 @@ public class AccountRepository implements IRepository<Account>{
     public boolean update(Account account) {
         try{
             transaction.begin();
-            em.merge(account);
+            String query = "UPDATE Account a SET a.fullName = :fullName, a.password = :password, a.email = :email, a.phone = :phone, a.status = :status WHERE a.accountId = :accountId";
+            em.createQuery(query)
+                    .setParameter("fullName", account.getFullName())
+                    .setParameter("password", account.getPassword())
+                    .setParameter("email", account.getEmail())
+                    .setParameter("phone", account.getPhone())
+                    .setParameter("status", account.getStatus())
+                    .setParameter("accountId", account.getAccountId())
+                    .executeUpdate();
             transaction.commit();
             return true;
         } catch (Exception e){
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
             e.printStackTrace();
             return false;
         }

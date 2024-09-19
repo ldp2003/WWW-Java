@@ -85,4 +85,14 @@ public class Account {
         this.status = status;
     }
 
+    public Account(String accountId, String fullName, String password, String email, String phone, Byte status) {
+        this.accountId = accountId;
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.status = status;
+    }
+
+    public Account(){};
 }

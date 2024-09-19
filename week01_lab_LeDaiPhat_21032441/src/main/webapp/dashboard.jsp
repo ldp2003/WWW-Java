@@ -20,15 +20,15 @@
     <title>This is dashboard</title>
 </head>
 <body>
-<form action="controller" method="get">
+<form action="controller" method="post" id="form">
     <p>Account ID: </p>
-    <p id="account_id"><%= account.getAccountId()%></p><br>
+    <input type="text" id="account_id" value="<%= account.getAccountId()%>" disabled    ><br>
     <p>Fullname: </p>
-    <p id="fullname"><%= account.getFullName() %></p><br>
+    <input type="text" id="fullname" value="<%= account.getFullName()%>" disabled><br>
     <p>Email: </p>
-    <p id="email"><%= account.getEmail() %></p><br>
+    <input type="text" id="email" value="<%= account.getEmail()%>" disabled><br>
     <p>Phone: </p>
-    <p id="phone"><%= account.getPhone() %></p><br>
+    <input type="text" id="phone" value="<%= account.getPhone()%>" disabled><br>
     <p>Role: </p>
     <p id = "roleName">
             <%
@@ -40,7 +40,39 @@
     <input type="submit" name="action" value="Show all account">
     <input type="text" name="roleName" placeholder="Role name">
     <input type="submit" name="action" value="show accounts by role">
-
+    <input type="button" onclick="enableInputs(event)" id="editButton" value="edit">
+    <input type="hidden" name="action" id="action" value="save">
 </form>
+<script>
+    function enableInputs(event) {
+        var inputs = document.getElementsByTagName('input');
+        var editButton = document.getElementById('editButton');
+        var actionInput = document.getElementById('action');
+        var form = document.getElementById('form');
+        if (inputs[1].disabled) {
+            for (var i = 1; i < 4; i++) {
+                inputs[i].disabled = false;
+            }
+            editButton.value = "save";
+            actionInput.value = "edit";
+        } else {
+            event.preventDefault();
+            for (var i = 1; i < 4; i++) {
+                inputs[i].disabled = true;
+            }
+            editButton.value = "edit";
+            actionInput.value = "save";
+            // AJAX request
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "controller", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                }
+            }
+            xhr.send("action=save&accountId=" + inputs[0].value + "&fullName=" + inputs[1].value + "&email=" + inputs[2].value + "&phone=" + inputs[3].value);
+        }
+    }
+</script>
 </body>
 </html>

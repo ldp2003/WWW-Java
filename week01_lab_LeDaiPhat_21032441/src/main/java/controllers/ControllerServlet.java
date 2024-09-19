@@ -35,6 +35,7 @@ public class ControllerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
         String action = req.getParameter("action");
         HttpSession session = req.getSession();
+
         switch (action.toLowerCase()) {
             // Account
             case "login": {
@@ -71,6 +72,29 @@ public class ControllerServlet extends HttpServlet {
                 String roleName = req.getParameter("roleName");
                 session.setAttribute("accounts", accountService.getAccountByRole(roleName));
                 resp.sendRedirect("table-account.jsp");
+                break;
+            }
+
+            default: {
+                req.getRequestDispatcher("/page-not-found.jsp").forward(req, resp);
+            }
+        }
+    }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
+        System.out.println("action: " + action);
+        HttpSession session = req.getSession();
+        switch (action.toLowerCase()){
+            case "save": {
+                String fullName = req.getParameter("fullName");
+                System.out.println("fullName: " + fullName);
+                String password = ((Account) session.getAttribute("account")).getPassword();
+                String email = req.getParameter("email");
+                String phone = req.getParameter("phone");
+                accountService.editAccountById(req.getParameter("accountId"), fullName, password, email, phone, (byte) 1);
+                session.setAttribute("account", new Account(req.getParameter("account_Id"), fullName, password, email, phone, (byte) 1));
                 break;
             }
             default: {
