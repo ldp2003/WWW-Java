@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    div.inline {
+        color: black;
+        float: left;
+        margin: 5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    div.inline a {
+        text-decoration: none;
+    }
+
+    div.inline a.active {
+        color: white;
+        padding: 10px;
+        padding-bottom: 3px;
+        background-color: #92c8ff;
+        border: 1px solid #1a5db9;
+        border-radius: 5px;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Job detail</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384
+T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous">
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384
+C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="container">
+    <button type="button" class="btn btn-secondary" onclick="window.history.back()"><- Back</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/'">Main menu</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/jobs'">Jobs</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/listPaging'">Candidates</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='/companies'">Companies</button>
+    <h2>Job Detail</h2>
+    <div>
+        <p><strong>Job Name:</strong> <span th:text="${job.jobName}"></span></p>
+        <p><strong>Job Description:</strong> <span th:text="${job.jobDesc}"></span></p>
+        <p><strong>Company:</strong> <span th:text="${job.company.compName}"></span>  <a th:href="@{/seeCompanyDetail/{id}(id=${job.company.id})}" style="text-decoration: none">  ---> See detail about our company</a> </p>
+    </div>
+    <h3>Skills Required</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Skill Name</th>
+            <th>Skill level</th>
+            <th>More Infos</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="skill : ${job.jobSkills}">
+            <td th:text="${skill.getSkill().skillName}"></td>
+            <td th:text="${skill.skillLevel}"></td>
+            <td th:text="${skill.moreInfos}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>Suggesting Candidates</h3>
+    <div th:switch="${candidatesSuggesting}">
+        <h4 th:case="null">No candidates suit for yet!</h4>
+        <div th:case="*">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Date of Birth</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Detail</th>
+                    <th>Apply</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="candidate : ${candidatesSuggesting}">
+                    <td th:text="${candidate.fullName}"></td>
+                    <td th:text="${candidate.dob}"></td>
+                    <td th:text="${candidate.address.street} + ', ' + ${candidate.address.city} + ', ' + ${candidate.address.country.name} + ', ' + ${candidate.address.number} + ', ' + ${candidate.address.zipcode}"></td>
+                    <td th:text="${candidate.phone}"></td>
+                    <td th:text="${candidate.email}"></td>
+                    <td><a th:href="@{/candidateDetail/{id}(id=${candidate.id})}">See detail</a></td>
+                    <td>
+                        <form th:action="@{/seeJobDetail/{jobId}/apply/{candidateId}(jobId=${job.id}, candidateId=${candidate.id})}" method="post">
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="inline" th:if="${candidatesSuggesting.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+                <a th:href="@{/seeJobDetail/{id}(id=${job.id}, size=${candidatesSuggesting.size}, page=${pageNumber})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==candidatesSuggesting.number + 1} ? 'active'"></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
