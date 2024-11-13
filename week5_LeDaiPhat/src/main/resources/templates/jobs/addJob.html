@@ -38,7 +38,7 @@ C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             <td>Company:</td>
             <td>
                 <select th:field="*{company.id}">
-                    <option th:each="company : ${companies}" th:value="${company.id}" th:text="${company.compName}"></option>
+                    <option th:each="company : ${companies}" th:value="${company.id}" th:text="${company.id} + '. ' + ${company.compName}"></option>
                 </select>
             </td>
         </tr>
