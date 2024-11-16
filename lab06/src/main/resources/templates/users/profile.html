@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile {
+            text-align: center;
+        }
+
+        .profile h2 {
+            color: #333;
+            margin: 0;
+        }
+
+        .profile p {
+            color: #555;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/user/edit/{id}(id=${user.id})}"  class="back-button">Edit</a>
+    <div class="profile">
+        <h2 th:text="${user.firstName} + ' ' + ${user.middleName} +' ' + ${user.lastName}">User Name</h2>
+        <p th:text="'Email: ' + ${user.email}">Email</p>
+        <p th:text="'Mobile: ' + ${user.mobile}">Mobile</p>
+        <p th:text="'Joined: ' + ${user.registeredAt}">Join Date</p>
+        <p th:text="'Intro: '+ ${user.intro}"></p>
+        <p th:text="'Profile: '+ ${user.profile}"></p>
+    </div>
+    <a href="/post/posts" class="back-button">Back to Posts</a>
+
+</div>
+</body>
+</html>

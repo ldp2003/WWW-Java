@@ -108,10 +108,12 @@ public class JobController {
     }
 
     @PostMapping("/seeJobDetail/{jobId}/apply/{candidateId}")
-    public String applyForJob(@PathVariable Long jobId, @PathVariable Long candidateId) {
+    public String applyForJob(@PathVariable Long jobId, @PathVariable Long candidateId, Model model) {
         Candidate candidate = candidateService.findById(candidateId);
         Job job = jobService.findById(jobId);
         emailService.sendApplicationEmail(candidate, job);
+        model.addAttribute("successMessage", "Email sent successfully!");
+
         return "redirect:/jobs";
     }
 }

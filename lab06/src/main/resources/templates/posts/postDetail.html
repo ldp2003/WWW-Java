@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            margin-bottom: 20px;
+        }
+
+        .post h2 {
+            color: #333;
+            margin: 0;
+        }
+
+        .post .author {
+            font-style: italic;
+            color: #888;
+        }
+
+        .post .content {
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .comment-section {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+
+        .comment-section .comment {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+            max-width: 100%;
+            word-wrap: break-word;
+            display: block;
+        }
+
+        .comment-section .child-comment {
+            margin-left: 20px;
+            border-left: 2px solid #ccc;
+            padding-left: 10px;
+            margin-top: 10px;
+            background-color: #f0f8ff;
+            white-space: normal;
+        }
+
+        .comment-section .child-comment .child-comment {
+            margin-left: 20px;
+            background-color: #e6f7ff;
+        }
+
+        .comment-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .comment-section button {
+            margin-top: 5px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .comment-section button:hover {
+            background-color: #218838;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        .comment-section select {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Back Button -->
+    <a href="/post/posts" class="back-button">Back to Posts</a>
+    <!-- Post Detail -->
+    <div class="post">
+        <h2 th:text="${post.title}">Post Title</h2>
+        <p class="author" th:text="'By ' + ${post.author.getFirstName()} + ' ' + ${post.author.getMiddleName()} + ' ' + ${post.author.getLastName()}">Author</p>
+        <div class="content" th:text="${post.content}">Post content...</div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="comment-section">
+        <h3>Comments</h3>
+        <div th:each="comment : ${post.postComments}" th:if="${comment.parent == null}" class="comment">
+            <p   th:text="${comment.content}">Comment content...</p>
+            <button class="reply-button" onclick="setParentId(${comment.id})">Reply</button>
+            <div th:each="childComment : ${comment.postComments}" class="child-comment">
+                <p th:text="${childComment.content}">Child comment content...</p>
+            </div>
+        </div>
+        <form action="/post-comment/add" method="post">
+            <textarea name="content" placeholder="Add a comment..."></textarea>
+            <!-- Displaying Parent Information (disabled select) -->
+            <select name="parentCommentId">
+                <option value="">Reply to post</option>
+                <option th:each="comment : ${post.postComments}" th:value="${comment.id}" th:text="'Reply to: ' + ${comment.content}"></option>
+            </select>
+            <input type="hidden" name="postId" th:value="${post.id}">
+            <button>Submit Comment</button>
+        </form>
+    </div>
+
+    <!-- Back Button -->
+    <a href="/post/posts" class="back-button">Back to Posts</a>
+</div>
+</body>
+</html>
