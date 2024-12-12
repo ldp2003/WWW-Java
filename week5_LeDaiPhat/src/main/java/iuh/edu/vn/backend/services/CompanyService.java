@@ -33,4 +33,8 @@ public class CompanyService {
         return companyRepository.findAll(pageable);
     }
 
+    public Company findById(Long id) {
+        return companyRepository.findById(id).orElse(null);
+    }
+
 }

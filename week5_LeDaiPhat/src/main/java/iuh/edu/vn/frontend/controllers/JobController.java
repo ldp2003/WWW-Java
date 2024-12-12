@@ -1,5 +1,7 @@
 package iuh.edu.vn.frontend.controllers;
 
+import com.neovisionaries.i18n.CountryCode;
+import iuh.edu.vn.backend.ids.CandidateSkillId;
 import iuh.edu.vn.backend.ids.JobSkillId;
 import iuh.edu.vn.backend.models.*;
 import iuh.edu.vn.backend.repositories.CompanyRepository;
@@ -14,11 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -114,6 +115,38 @@ public class JobController {
         emailService.sendApplicationEmail(candidate, job);
         model.addAttribute("successMessage", "Email sent successfully!");
 
+        return "redirect:/jobs";
+    }
+
+    @GetMapping("/editJob/{id}")
+    public String editJobForm(@PathVariable("id") Long id, Model model){
+        Job job = jobService.findById(id);
+        model.addAttribute("jobEditing", job);
+        model.addAttribute("companies", companyRepository.findAll());
+        model.addAttribute("skills", skillRepository.findAll());
+        return "jobs/editJob";
+    }
+
+    @PostMapping("/editJob/{id}")
+    public String editJob(@PathVariable("id") Long id, @ModelAttribute Job job){
+        List<JobSkill> originalSkills = jobSkillRepository.findByJobId(id);
+        List<JobSkill> skillsToDelete = new ArrayList<>(originalSkills);
+        job.getJobSkills().removeIf(jobSkill -> jobSkill.getSkill().getId() == null);
+        jobRepository.save(job);
+        for (JobSkill jobSkill : job.getJobSkills()) {
+            if (jobSkill.getSkill() != null) {
+                JobSkillId jobSkillId = new JobSkillId();
+                jobSkillId.setJobId(job.getId());
+                jobSkillId.setSkillId(jobSkill.getSkill().getId());
+                jobSkill.setId(jobSkillId);
+                jobSkill.setJob(job);
+            }
+        }
+        for (JobSkill jobSkill : job.getJobSkills()) {
+            skillsToDelete.removeIf(skill -> skill.getSkill().getId().equals(jobSkill.getSkill().getId()));
+        }
+        jobSkillRepository.deleteAll(skillsToDelete);
+        jobSkillRepository.saveAll(job.getJobSkills());
         return "redirect:/jobs";
     }
 }

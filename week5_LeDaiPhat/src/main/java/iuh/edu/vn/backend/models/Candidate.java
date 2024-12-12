@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "candidate", schema = "works")
 public class Candidate {
     @Id
@@ -42,15 +43,4 @@ public class Candidate {
     @OneToMany(mappedBy = "candidate")
     private List<Experience> experiences = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "Candidate{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", dob='" + dob + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", addressId=" + (address != null ? address.getId() : "null") +
-                '}';
-    }
 }

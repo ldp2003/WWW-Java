@@ -14,7 +14,7 @@ import lombok.ToString;
 @Table(name = "job_skill", schema = "works")
 public class JobSkill {
     @EmbeddedId
-    private JobSkillId id = new JobSkillId();
+    private JobSkillId id;
 
     @MapsId("jobId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

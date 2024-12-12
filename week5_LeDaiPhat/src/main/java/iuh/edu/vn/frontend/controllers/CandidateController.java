@@ -9,6 +9,7 @@ import iuh.edu.vn.backend.repositories.CandidateSkillRepository;
 import iuh.edu.vn.backend.repositories.SkillRepository;
 import iuh.edu.vn.backend.services.AddressService;
 import iuh.edu.vn.backend.services.CandidateService;
+import iuh.edu.vn.backend.services.CandidateSkillService;
 import iuh.edu.vn.backend.services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,8 @@ public class CandidateController {
     private JobService jobService;
     @Autowired
     private SkillRepository skillRepository;
+    @Autowired
+    private CandidateSkillService candidateSkillService;
     @Autowired
     private CandidateSkillRepository candidateSkillRepository;
 
@@ -106,6 +110,8 @@ public class CandidateController {
 
     @PostMapping("/editCandidate/{id}")
     public String editCandidate(@PathVariable("id") Long id, @ModelAttribute Candidate candidate){
+        List<CandidateSkill> originalSkills = candidateSkillRepository.findByCandidateId(id);
+        List<CandidateSkill> skillsToDelete = new ArrayList<>(originalSkills);
         candidate.getCandidateSkills().removeIf(candidateSkill -> candidateSkill.getSkill().getId() == null);
         addressService.add(candidate.getAddress());
         candidateRepository.save(candidate);
@@ -118,6 +124,10 @@ public class CandidateController {
                 candidateSkill.setCandidate(candidate);
             }
         }
+        for (CandidateSkill candidateSkill : candidate.getCandidateSkills()) {
+            skillsToDelete.removeIf(skill -> skill.getSkill().getId().equals(candidateSkill.getSkill().getId()));
+        }
+        candidateSkillRepository.deleteAll(skillsToDelete);
         candidateSkillRepository.saveAll(candidate.getCandidateSkills());
         return "redirect:/listPaging";
     }

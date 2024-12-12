@@ -5,6 +5,7 @@ import iuh.edu.vn.backend.enums.SkillLevel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -30,4 +31,12 @@ public class CandidateSkill {
     @Column(name = "skill_level", nullable = false)
     private SkillLevel skillLevel;
 
+    @Override
+    public String toString() {
+        return "CandidateSkill{" +
+                "id=" + id +
+                ", moreInfos='" + moreInfos + '\'' +
+                ", skillLevel=" + skillLevel +
+                '}';
+    }
 }

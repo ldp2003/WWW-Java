@@ -69,4 +69,21 @@ public class CompanyController {
         companyService.add(company);
         return "redirect:/companies";
     }
+
+    @GetMapping("/editCompany/{id}")
+    public String showEditCompanyForm(@PathVariable("id") Long id, Model model) {
+        Company company = companyService.findById(id);
+        model.addAttribute("companyEditing", company);
+        model.addAttribute("address", new Address());
+        model.addAttribute("countryCodes", Arrays.stream(CountryCode.values())
+                .collect(Collectors.toList()));
+        return "companies/editCompany";
+    }
+
+    @PostMapping("/editCompany/{id}")
+    public String editCompany(@PathVariable("id") Long id, @ModelAttribute Company company) {
+        addressService.add(company.getAddress());
+        companyService.update(company);
+        return "redirect:/companies";
+    }
 }
